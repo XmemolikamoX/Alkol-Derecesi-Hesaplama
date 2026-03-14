@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Alkol Derecesi Hesaplama</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app-shell">
+    <!-- Karşılama Ekranı -->
+    <section id="welcomeScreen" class="screen active">
+      <div class="welcome-card">
+        <p class="eyebrow">Karşılama</p>
+        <h1>Alkol Derecesi Hesaplama Paneli</h1>
+        <p class="subtitle">
+          Sisteme devam etmek için bir takma ad girin.
+        </p>
+
+        <form id="nicknameForm" class="nickname-form" novalidate>
+          <div class="form-group">
+            <label for="nicknameInput">Takma Ad</label>
+            <input
+              type="text"
+              id="nicknameInput"
+              maxlength="30"
+              placeholder="Örn: Umay-01"
+              autocomplete="off"
+            />
+          </div>
+
+          <button type="submit" class="primary-btn full-btn">
+            Panele Gir
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- Hesaplama Ekranı -->
+    <section id="calculatorScreen" class="screen">
+      <section class="calculator-card wide-card">
+        <div class="left-panel">
+          <div class="topbar">
+            <div>
+              <p class="eyebrow">Hesaplama Aracı</p>
+              <h1>Alkol Derecesi Hesaplama</h1>
+              <p class="subtitle">
+                Mevcut hacim ve alkol derecesine göre hedef dereceye ulaşmak için
+                gerekli ENA veya su miktarını hesaplayın.
+              </p>
+            </div>
+
+            <div class="user-chip">
+              <span class="user-chip-label">Kullanıcı</span>
+              <strong id="activeNickname">-</strong>
+            </div>
+          </div>
+
+          <form id="calculatorForm" class="calculator-form" novalidate>
+            <div class="form-group">
+              <label for="volume">Mevcut Hacim (litre)</label>
+              <input
+                type="number"
+                id="volume"
+                step="0.01"
+                min="0.01"
+                placeholder="Örn: 1000"
+                inputmode="decimal"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="currentDeg">Mevcut Alkol Derecesi (%)</label>
+              <input
+                type="number"
+                id="currentDeg"
+                step="0.01"
+                min="0.01"
+                max="99.99"
+                placeholder="Örn: 40"
+                inputmode="decimal"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="targetDeg">Hedef Alkol Derecesi (%)</label>
+              <input
+                type="number"
+                id="targetDeg"
+                step="0.01"
+                min="0.01"
+                max="99.99"
+                placeholder="Örn: 37.5"
+                inputmode="decimal"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="density">ENA Yoğunluğu (kg/L)</label>
+              <input
+                type="number"
+                id="density"
+                step="0.01"
+                min="0.01"
+                placeholder="Varsayılan: 0.8"
+                inputmode="decimal"
+              />
+              <small class="input-hint">
+                Boş bırakılırsa varsayılan değer 0.8 alınır.
+              </small>
+            </div>
+
+            <div class="button-row">
+              <button type="submit" class="primary-btn">Hesapla</button>
+              <button type="button" class="secondary-btn" id="resetBtn">Temizle</button>
+            </div>
+          </form>
+
+          <div id="result" class="result-box" aria-live="polite"></div>
+        </div>
+
+        <aside class="right-panel">
+          <div class="chart-card">
+            <div class="chart-header">
+              <h2>Silindir Grafik</h2>
+              <p>Mevcut miktar ve eklenecek değer görselleştirilir.</p>
+            </div>
+
+            <div class="cylinder-wrapper">
+              <div class="cylinder-scale">
+                <span>100%</span>
+                <span>70%</span>
+                <span>0%</span>
+              </div>
+
+              <div class="cylinder-area">
+                <div class="cylinder-top-cap"></div>
+
+                <div class="cylinder">
+                  <div class="liquid-base" id="liquidBase">
+                    <div class="liquid-base-top"></div>
+                  </div>
+
+                  <div class="liquid-added" id="liquidAdded">
+                    <div class="liquid-added-top"></div>
+                  </div>
+                </div>
+
+                <div class="cylinder-bottom-cap"></div>
+              </div>
+            </div>
+
+            <div class="chart-legend">
+              <div class="legend-item">
+                <span class="legend-color legend-current"></span>
+                <span>Mevcut Hacim</span>
+              </div>
+              <div class="legend-item">
+                <span class="legend-color legend-added"></span>
+                <span id="legendAddedText">Eklenecek Miktar</span>
+              </div>
+            </div>
+
+            <div class="chart-stats">
+              <div class="stat-box">
+                <span class="stat-label">Mevcut</span>
+                <strong id="statCurrent">0.00 L</strong>
+              </div>
+
+              <div class="stat-box">
+                <span class="stat-label">Eklenecek</span>
+                <strong id="statAdded">0.00</strong>
+              </div>
+
+              <div class="stat-box">
+                <span class="stat-label">Toplam</span>
+                <strong id="statTotal">0.00 L</strong>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </section>
+    </section>
+  </main>
+
+  <!-- Sağ altta geçmiş butonu -->
+  <button id="historyToggleBtn" class="history-fab" type="button" aria-label="Geçmiş Hesaplamalar">
+    Geçmiş Hesaplamalar
+  </button>
+
+  <!-- Geçmiş paneli -->
+  <aside id="historyPanel" class="history-panel" aria-hidden="true">
+    <div class="history-panel-header">
+      <div>
+        <p class="eyebrow">Kayıtlar</p>
+        <h2>Geçmiş Hesaplamalar</h2>
+      </div>
+      <button id="closeHistoryBtn" class="history-close-btn" type="button">×</button>
+    </div>
+
+    <div id="historyMeta" class="history-meta"></div>
+    <div id="historyList" class="history-list"></div>
+  </aside>
+
+  <div id="historyBackdrop" class="history-backdrop"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
