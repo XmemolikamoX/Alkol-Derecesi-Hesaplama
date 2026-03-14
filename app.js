@@ -53,6 +53,15 @@ document.addEventListener("DOMContentLoaded", () => {
     return value.trim().replace(/\s+/g, " ");
   }
 
+  function escapeHtml(value) {
+    return String(value ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#39;");
+  }
+
   function getStoredNickname() {
     return localStorage.getItem(STORAGE_KEYS.nickname) || "";
   }
@@ -129,13 +138,13 @@ document.addEventListener("DOMContentLoaded", () => {
     renderHistory();
   }
 
-  function escapeHtml(value) {
-    return String(value ?? "")
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;")
-      .replaceAll('"', "&quot;")
-      .replaceAll("'", "&#39;");
+  function updateHistoryNote(index, note) {
+    const history = getHistory();
+    if (!history[index]) return;
+
+    history[index].noteText = note.trim();
+    setHistory(history);
+    renderHistory();
   }
 
   function parseUserAgentInfo(userAgent) {
@@ -237,6 +246,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     historyList.innerHTML = history
       .map((item, index) => {
+        const hasNote = Boolean(item.noteText && item.noteText.trim());
+
         return `
           <article class="history-item">
             <div class="history-item-top">
@@ -261,12 +272,36 @@ document.addEventListener("DOMContentLoaded", () => {
             <div class="history-actions">
               <button
                 type="button"
+                class="history-note-btn"
+                data-note-btn="${index}"
+                aria-expanded="${hasNote ? "true" : "false"}"
+              >
+                ${hasNote ? "Notu Düzenle" : "Not Ekle"}
+              </button>
+
+              <button
+                type="button"
                 class="history-detail-btn"
                 data-detail-btn="${index}"
                 aria-expanded="false"
               >
                 Detaylar
               </button>
+            </div>
+
+            <div class="history-note-panel" data-note-panel="${index}" ${hasNote ? "" : "hidden"}>
+              <label class="history-note-label" for="noteInput_${index}">Kişisel Not</label>
+              <textarea
+                id="noteInput_${index}"
+                class="history-note-textarea"
+                data-note-input="${index}"
+                rows="3"
+                placeholder="Bu hesaplama için not ekleyin..."
+              >${escapeHtml(item.noteText || "")}</textarea>
+              <div class="history-note-actions">
+                <button type="button" class="history-note-save-btn" data-note-save="${index}">Kaydet</button>
+                <button type="button" class="history-note-cancel-btn" data-note-cancel="${index}">Kapat</button>
+              </div>
             </div>
 
             <div class="history-details" data-detail-panel="${index}" hidden>
@@ -300,7 +335,46 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       panel.removeAttribute("hidden");
       button.setAttribute("aria-expanded", "true");
-      button.textContent = "Detayları Gizle";
+      button.textContent = "Gizle";
+    }
+  }
+
+  function openNotePanel(index) {
+    const panel = historyList.querySelector(`[data-note-panel="${index}"]`);
+    const button = historyList.querySelector(`[data-note-btn="${index}"]`);
+    const input = historyList.querySelector(`[data-note-input="${index}"]`);
+
+    if (!panel || !button) return;
+
+    panel.removeAttribute("hidden");
+    button.setAttribute("aria-expanded", "true");
+    button.textContent = "Notu Düzenle";
+
+    if (input) {
+      input.focus();
+      input.setSelectionRange(input.value.length, input.value.length);
+    }
+  }
+
+  function closeNotePanel(index) {
+    const panel = historyList.querySelector(`[data-note-panel="${index}"]`);
+    const button = historyList.querySelector(`[data-note-btn="${index}"]`);
+    const input = historyList.querySelector(`[data-note-input="${index}"]`);
+    const history = getHistory();
+    const currentItem = history[index];
+    const hasNote = Boolean(currentItem?.noteText && currentItem.noteText.trim());
+
+    if (!panel || !button) return;
+
+    if (hasNote) {
+      if (input) input.value = currentItem.noteText;
+      button.textContent = "Notu Düzenle";
+      button.setAttribute("aria-expanded", "true");
+    } else {
+      panel.setAttribute("hidden", "");
+      button.textContent = "Not Ekle";
+      button.setAttribute("aria-expanded", "false");
+      if (input) input.value = "";
     }
   }
 
@@ -465,7 +539,8 @@ document.addEventListener("DOMContentLoaded", () => {
       platformText: deviceMeta.platform,
       platformTypeText: deviceMeta.platformType,
       userAgentText: deviceMeta.userAgent,
-      brandModelText: deviceMeta.brandModel
+      brandModelText: deviceMeta.brandModel,
+      noteText: ""
     });
   }
 
@@ -500,9 +575,33 @@ document.addEventListener("DOMContentLoaded", () => {
   historyBackdrop.addEventListener("click", closeHistoryPanel);
 
   historyList.addEventListener("click", (event) => {
-    const button = event.target.closest("[data-detail-btn]");
-    if (!button) return;
-    toggleHistoryDetails(button);
+    const detailButton = event.target.closest("[data-detail-btn]");
+    if (detailButton) {
+      toggleHistoryDetails(detailButton);
+      return;
+    }
+
+    const noteButton = event.target.closest("[data-note-btn]");
+    if (noteButton) {
+      const index = noteButton.getAttribute("data-note-btn");
+      openNotePanel(index);
+      return;
+    }
+
+    const noteSaveButton = event.target.closest("[data-note-save]");
+    if (noteSaveButton) {
+      const index = noteSaveButton.getAttribute("data-note-save");
+      const input = historyList.querySelector(`[data-note-input="${index}"]`);
+      const noteValue = input ? input.value : "";
+      updateHistoryNote(index, noteValue);
+      return;
+    }
+
+    const noteCancelButton = event.target.closest("[data-note-cancel]");
+    if (noteCancelButton) {
+      const index = noteCancelButton.getAttribute("data-note-cancel");
+      closeNotePanel(index);
+    }
   });
 
   document.addEventListener("keydown", (event) => {
