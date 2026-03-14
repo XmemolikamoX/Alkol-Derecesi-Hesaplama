@@ -8,23 +8,26 @@
 </head>
 <body>
   <main class="app-shell">
-    <!-- Karşılama Ekranı -->
     <section id="welcomeScreen" class="screen active">
       <div class="welcome-card">
-        <p class="eyebrow">Karşılama</p>
+        <div class="welcome-logo-wrap">
+          <img src="logo.png" alt="Logo" class="welcome-logo" />
+        </div>
+
+        <p class="eyebrow">Copyright (c) 2026 Mehmet KAYMAK</p>
         <h1>Alkol Derecesi Hesaplama Paneli</h1>
         <p class="subtitle">
-          Sisteme devam etmek için bir takma ad girin.
+          Sisteme devam etmek için adınızı girin.
         </p>
 
         <form id="nicknameForm" class="nickname-form" novalidate>
           <div class="form-group">
-            <label for="nicknameInput">Takma Ad</label>
+            <label for="nicknameInput">Adınız</label>
             <input
               type="text"
               id="nicknameInput"
               maxlength="30"
-              placeholder="Örn: Umay-01"
+              placeholder="Örn: Umay"
               autocomplete="off"
             />
           </div>
@@ -36,7 +39,6 @@
       </div>
     </section>
 
-    <!-- Hesaplama Ekranı -->
     <section id="calculatorScreen" class="screen">
       <section class="calculator-card wide-card">
         <div class="left-panel">
@@ -46,13 +48,19 @@
               <h1>Alkol Derecesi Hesaplama</h1>
               <p class="subtitle">
                 Mevcut hacim ve alkol derecesine göre hedef dereceye ulaşmak için
-                gerekli ENA veya su miktarını hesaplayın.
+                gerekli ENA veya su miktarını giriniz.
               </p>
             </div>
 
-            <div class="user-chip">
-              <span class="user-chip-label">Kullanıcı</span>
-              <strong id="activeNickname">-</strong>
+            <div class="user-area">
+              <div class="header-logo-box">
+                <img src="logo.png" alt="Logo" class="header-logo" />
+              </div>
+
+              <div class="user-chip">
+                <span class="user-chip-label">Kullanıcı</span>
+                <strong id="activeNickname">-</strong>
+              </div>
             </div>
           </div>
 
@@ -123,7 +131,7 @@
           <div class="chart-card">
             <div class="chart-header">
               <h2>Silindir Grafik</h2>
-              <p>Mevcut miktar ve eklenecek değer görselleştirilir.</p>
+              <p>  </p>
             </div>
 
             <div class="cylinder-wrapper">
@@ -183,12 +191,10 @@
     </section>
   </main>
 
-  <!-- Sağ altta geçmiş butonu -->
   <button id="historyToggleBtn" class="history-fab" type="button" aria-label="Geçmiş Hesaplamalar">
     Geçmiş Hesaplamalar
   </button>
 
-  <!-- Geçmiş paneli -->
   <aside id="historyPanel" class="history-panel" aria-hidden="true">
     <div class="history-panel-header">
       <div>
