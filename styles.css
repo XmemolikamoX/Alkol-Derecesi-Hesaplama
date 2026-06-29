@@ -839,6 +839,18 @@ button:active {
   display: none;
 }
 
+.topbar-result {
+  margin-top: 10px;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.5;
+  border: 1px solid var(--success-border);
+  background: var(--success-bg);
+  color: var(--text-primary);
+}
+
 @media (max-width: 980px) {
   .topbar-hesapla-btn {
     display: inline-flex;
