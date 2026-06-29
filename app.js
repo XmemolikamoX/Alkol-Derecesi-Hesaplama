@@ -31,6 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const statTotal = document.getElementById("statTotal");
   const legendAddedText = document.getElementById("legendAddedText");
   const cylinderResultText = document.getElementById("cylinderResultText");
+  const topbarResult = document.getElementById("topbarResult");
 
   const historyToggleBtn = document.getElementById("historyToggleBtn");
   const historyPanel = document.getElementById("historyPanel");
@@ -400,12 +401,16 @@ document.addEventListener("DOMContentLoaded", () => {
     resultBox.textContent = message;
     resultBox.className = `result-box ${type}`;
     cylinderResultText.textContent = message;
+    topbarResult.textContent = message;
+    topbarResult.removeAttribute("hidden");
   }
 
   function clearResult() {
     resultBox.textContent = "";
     resultBox.className = "result-box";
     cylinderResultText.textContent = "";
+    topbarResult.textContent = "";
+    topbarResult.setAttribute("hidden", "");
   }
 
   function resetCylinder() {
