@@ -30,6 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const statAdded = document.getElementById("statAdded");
   const statTotal = document.getElementById("statTotal");
   const legendAddedText = document.getElementById("legendAddedText");
+  const cylinderResultText = document.getElementById("cylinderResultText");
 
   const historyToggleBtn = document.getElementById("historyToggleBtn");
   const historyPanel = document.getElementById("historyPanel");
@@ -398,11 +399,13 @@ document.addEventListener("DOMContentLoaded", () => {
   function showResult(message, type = "info") {
     resultBox.textContent = message;
     resultBox.className = `result-box ${type}`;
+    cylinderResultText.textContent = message;
   }
 
   function clearResult() {
     resultBox.textContent = "";
     resultBox.className = "result-box";
+    cylinderResultText.textContent = "";
   }
 
   function resetCylinder() {
