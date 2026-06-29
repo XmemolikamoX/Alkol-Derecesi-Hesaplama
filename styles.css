@@ -392,6 +392,14 @@ button:active {
   line-height: 1.5;
 }
 
+.cylinder-result-text {
+  color: var(--accent-soft);
+  font-size: 0.88rem;
+  font-weight: 600;
+  line-height: 1.5;
+  min-height: 1.2em;
+}
+
 .cylinder-wrapper {
   display: flex;
   align-items: flex-end;
